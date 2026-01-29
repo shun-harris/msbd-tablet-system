@@ -694,7 +694,10 @@
         return { exists:false };
       }
       
-      const lookupSource = localStorage.getItem('contactLookupSource') || 'ghl';
+      const lookupSource = localStorage.getItem('contactLookupSource') || 'crm';
+      if (!localStorage.getItem('contactLookupSource')) {
+        console.warn('⚠️ contactLookupSource not in localStorage - using default: crm');
+      }
       console.log(`🔍 Lookup source: ${lookupSource}`);
       
       // Try CRM first if source is 'crm' or 'both'
@@ -1501,7 +1504,7 @@
         const currentDesc = document.getElementById('currentLookupDesc');
         
         const updateLookupUI = () => {
-          const source = localStorage.getItem('contactLookupSource') || 'ghl'; // Default to GHL
+          const source = localStorage.getItem('contactLookupSource') || 'crm'; // Default to CRM
           lookupBtns.forEach(btn => {
             const btnSource = btn.getAttribute('data-source');
             if (btnSource === source) {
@@ -1516,12 +1519,12 @@
           });
           
           const descriptions = {
-            ghl: 'Uses GoHighLevel (current)',
-            crm: 'Uses MyDanceDesk CRM (faster)',
+            ghl: 'Uses GoHighLevel (legacy)',
+            crm: 'Uses MyDanceDesk CRM (default)',
             both: 'Tries CRM first, falls back to GHL'
           };
           if (currentLabel) currentLabel.textContent = source.toUpperCase();
-          if (currentDesc) currentDesc.textContent = descriptions[source] || descriptions.ghl;
+          if (currentDesc) currentDesc.textContent = descriptions[source] || descriptions.crm;
         };
         
         updateLookupUI();
@@ -1706,7 +1709,10 @@
         const d = String(phone||"").replace(/\D/g, "").slice(-10);
         if(d.length!==10) return { exists:false };
         
-        const lookupSource = localStorage.getItem('contactLookupSource') || 'ghl';
+        const lookupSource = localStorage.getItem('contactLookupSource') || 'crm';
+        if (!localStorage.getItem('contactLookupSource')) {
+          console.warn('⚠️ [verifyMember] contactLookupSource not in localStorage - using default: crm');
+        }
         
         // Try CRM first if source is 'crm' or 'both'
         if (lookupSource === 'crm' || lookupSource === 'both') {
